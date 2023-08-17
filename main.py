@@ -7,10 +7,8 @@ ok_chars = string.ascii_letters + string.digits
 
 
 @app.route('/')  
-def base_page():
-  # random_num = random.randint(1, 100000)  
+def base_page(): 
   return render_template('base.html')   
-  # random_number=random_num)
 
 @app.route('/add_book.html')
 def add_book():
@@ -40,6 +38,43 @@ def return_book():
 def calculate_rent_fee(days_issued):
     rent_fee = days_issued * 2
     return rent_fee
+  
+@app.route('/create_db.html')
+def create_db():
+  
+# Define the SQLAlchemy database model
+ Base = declarative_base()
+
+ class Book(Base):
+    __tablename__ = 'books'
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    author = Column(String)
+    publication_year = Column(Integer)
+
+ api_url = "https://frappe.io/api/method/frappe-library"
+
+ response = requests.get(api_url)
+ data = response.json()
+
+ db_url = "sqlite:///library.db"
+ engine = create_engine(db_url, echo=True)
+ Base.metadata.create_all(engine)
+ Session = sessionmaker(bind=engine)
+ session = Session()
+
+ for book_data in data.get("message", []):
+    book = Book(
+        title=book_data.get("title"),
+        author=book_data.get("author"),
+        publication_year=book_data.get("publication_year")
+    )
+    session.add(book)
+
+ session.commit()
+ session.close()
+ return render_template('create_db.html')
+
 
 if __name__ == "__main__":  
   app.run( host='0.0.0.0',  port=random.randint(2000, 9000))
