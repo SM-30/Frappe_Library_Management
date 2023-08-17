@@ -42,7 +42,6 @@ def calculate_rent_fee(days_issued):
 @app.route('/create_db.html')
 def create_db():
   
-# Define the SQLAlchemy database model
  Base = declarative_base()
 
  class Book(Base):
