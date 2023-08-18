@@ -1,5 +1,10 @@
 import random, string
 from flask import Flask, render_template, request, redirect
+import requests
+import sqlite3
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(  __name__, template_folder='templates',  static_folder='static')
 
